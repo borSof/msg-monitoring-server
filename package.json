@@ -11,7 +11,9 @@
   "description": "",
   "dependencies": {
     "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
+    "express-validator": "^7.2.1",
     "mongoose": "^8.15.0",
     "xml2js": "^0.6.2"
   }
