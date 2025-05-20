@@ -11,7 +11,7 @@ const Rule = require('./models/Rule');
 
 // 1) Глобален лог за всички заявки
 app.use((req, res, next) => {
-  console.log(`[🔔] ${new Date().toISOString()} ${req.method} ${req.url}`);
+  console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
   next();
 });
 
@@ -24,10 +24,10 @@ app.use((req, res, next) => {
     console.log('[📥] Raw XML:', req.body);
     xml2js.parseString(req.body, { explicitArray: false }, (err, result) => {
       if (err) {
-        console.error('[❌] XML parse failed:', err.message);
+        console.error('XML parse failed:', err.message);
         return res.status(400).send('Invalid XML');
       }
-      console.log('[✅] Parsed JSON:', result);
+      console.log('Parsed JSON:', result);
       req.body = result;
       next();
     });
@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 
 // Health-check endpoint
 app.get('/', (req, res) => {
-  res.send('✅ Server is running');
+  res.send('Server is running');
 });
 
 // POST /api/messages с интегриран Rule Engine
@@ -106,10 +106,10 @@ app.post('/api/messages', async (req, res) => {
     const msg = new Message({ rawXml: raw, parsed, status, tags });
     await msg.save();
 
-    console.log('[💾] Message saved:', msg._id, `status=${status}`, tags.length ? `tags=${tags}` : '');
+    console.log('Message saved:', msg._id, `status=${status}`, tags.length ? `tags=${tags}` : '');
     res.json({ status, id: msg._id, tags });
   } catch (e) {
-    console.error('[❌] While saving message:', e);
+    console.error('While saving message:', e);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -120,7 +120,7 @@ app.get('/api/messages', async (req, res) => {
     const all = await Message.find().sort({ receivedAt: -1 });
     res.json(all);
   } catch (e) {
-    console.error('[❌] Fetching messages:', e);
+    console.error('Fetching messages:', e);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -131,7 +131,7 @@ app.get('/api/messages/maybe', async (req, res) => {
     const m = await Message.find({ status: 'Maybe' }).sort({ receivedAt: -1 });
     res.json(m);
   } catch (e) {
-    console.error('[❌] Fetching maybe messages:', e);
+    console.error('Fetching maybe messages:', e);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -164,7 +164,7 @@ mongoose.connect('mongodb://localhost:27017/msg-monitoring', {
   useUnifiedTopology: true
 })
   .then(() => {
-    console.log('[✅] MongoDB connected');
+    console.log('MongoDB connected');
     app.listen(PORT, () => console.log(`[🚀] Server listening on http://localhost:${PORT}`));
   })
-  .catch(err => console.error('[❌] MongoDB error:', err));
+  .catch(err => console.error('MongoDB error:', err));
